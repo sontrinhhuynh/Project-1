@@ -1,85 +1,68 @@
 import tkinter as tk
 from tkinter import messagebox
 
-def check_win(board, player):
-    n = len(board)
-    win_condition = 5
+board = [[' ' for _ in range(9)] for _ in range(9)]
+Xplayer_turn = True
+running = True
 
-    # Check rows
-    for row in board:
-        for i in range(n - win_condition + 1):
-            if all(cell == player for cell in row[i:i + win_condition]):
+def putX(a, b):
+    board[a][b] = 'X'
+
+def putO(a, b):
+    board[a][b] = 'O'
+
+def checkWinner(player):
+    for i in range(9):
+        for j in range(5):
+            if all(board[i][j + k] == player for k in range(5)):
                 return True
 
-    # Check columns
-    for col in range(n):
-        for i in range(n - win_condition + 1):
-            if all(board[row][col] == player for row in range(i, i + win_condition)):
+    for i in range(5):
+        for j in range(9):
+            if all(board[i + k][j] == player for k in range(5)):
                 return True
 
-    # Check diagonals (top-left to bottom-right)
-    for i in range(n - win_condition + 1):
-        for j in range(n - win_condition + 1):
-            if all(board[i + k][j + k] == player for k in range(win_condition)):
+    for i in range(5):
+        for j in range(5):
+            if all(board[i + k][j + k] == player for k in range(5)):
                 return True
 
-    # Check diagonals (top-right to bottom-left)
-    for i in range(n - win_condition + 1):
-        for j in range(win_condition - 1, n):
-            if all(board[i + k][j - k] == player for k in range(win_condition)):
+    for i in range(5):
+        for j in range(4, 9):
+            if all(board[i + k][j - k] == player for k in range(5)):
                 return True
 
     return False
 
-def is_full(board):
-    return all(cell != " " for row in board for cell in row)
+def handle_click(row, col):
+    global Xplayer_turn, running
 
-class TicTacToe:
-    def __init__(self, root):
-        self.size = 9  # Bảng 9x9
-        self.board = [[" " for _ in range(self.size)] for _ in range(self.size)]
-        self.players = ["X", "O"]
-        self.turn = 0
+    if not running or board[row][col] != ' ':
+        return
 
-        self.root = root
-        self.root.title("Tik Tac Toe")
+    if Xplayer_turn:
+        putX(row, col)
+        buttons[row][col].config(text='X', state='disabled')
+        if checkWinner('X'):
+            messagebox.showinfo("Game Over", "Player X wins!")
+            running = False
+        Xplayer_turn = False
+    else:
+        putO(row, col)
+        buttons[row][col].config(text='O', state='disabled')
+        if checkWinner('O'):
+            messagebox.showinfo("Game Over", "Player O wins!")
+            running = False
+        Xplayer_turn = True
 
-        self.buttons = [[None for _ in range(self.size)] for _ in range(self.size)]
-        self.create_ui()
+root = tk.Tk()
+root.title("Tic Tac Toe 9x9")
 
-    def create_ui(self):
-        for i in range(self.size):
-            for j in range(self.size):
-                button = tk.Button(self.root, text=" ", width=4, height=2, font=("Arial", 16),
-                                   command=lambda x=i, y=j: self.handle_click(x, y))
-                button.grid(row=i, column=j)
-                self.buttons[i][j] = button
+buttons = [[None for _ in range(9)] for _ in range(9)]
+for i in range(9):
+    for j in range(9):
+        buttons[i][j] = tk.Button(root, text=' ', font=('Arial', 20), width=3, height=1,
+                                  command=lambda row=i, col=j: handle_click(row, col))
+        buttons[i][j].grid(row=i, column=j)
 
-    def handle_click(self, row, col):
-        if self.board[row][col] == " ":
-            current_player = self.players[self.turn]
-            self.board[row][col] = current_player
-            self.buttons[row][col].config(text=current_player, state=tk.DISABLED)
-
-            if check_win(self.board, current_player):
-                messagebox.showinfo("Game Over", f"Player {current_player} won!")
-                self.reset_board()
-            elif is_full(self.board):
-                messagebox.showinfo("Game Over", "Draw!")
-                self.reset_board()
-            else:
-                self.turn = 1 - self.turn  # Chuyển lượt
-        else:
-            messagebox.showwarning("Choose another blank")
-
-    def reset_board(self):
-        self.board = [[" " for _ in range(self.size)] for _ in range(self.size)]
-        self.turn = 0
-        for i in range(self.size):
-            for j in range(self.size):
-                self.buttons[i][j].config(text=" ", state=tk.NORMAL)
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    game = TicTacToe(root)
-    root.mainloop()
+root.mainloop()
