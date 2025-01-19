@@ -1,84 +1,44 @@
 import tkinter as tk
 from tkinter import messagebox
-import tic_tac_toe_3x3
-import minimax_3x3
-import tic_tac_toe
-import minimax
+import importlib
 
-def start_game(mode, play_type):
-    game_window = tk.Toplevel(root)
+def start_9x9_with_computer():
+    minimax = importlib.import_module('minimax')
+    minimax.root.mainloop()
 
-    if mode == "3x3":
-        if play_type == "PvP":
-            game_window.title("Tic Tac Toe 3x3 - Player vs Player")
-            tic_tac_toe_3x3.TicTacToe(game_window)
-        elif play_type == "PvC":
-            game_window.title("Tic Tac Toe 3x3 - Player vs Computer")
-            minimax_3x3.board = [[' ' for _ in range(3)] for _ in range(3)]
-            minimax_3x3.running = True
-            minimax_3x3.Xplayer_turn = True
-            minimax_3x3.buttons = [[None for _ in range(3)] for _ in range(3)]
-            for i in range(3):
-                for j in range(3):
-                    minimax_3x3.buttons[i][j] = tk.Button(
-                        game_window, text=' ', font=('Arial', 20), width=5, height=2,
-                        command=lambda row=i, col=j: minimax_3x3.handle_click(row, col)
-                    )
-                    minimax_3x3.buttons[i][j].grid(row=i, column=j)
-    elif mode == "9x9":
-        if play_type == "PvP":
-            game_window.title("Tic Tac Toe 9x9 - Player vs Player")
-            tic_tac_toe.TicTacToe(game_window)
-        elif play_type == "PvC":
-            game_window.title("Tic Tac Toe 9x9 - Player vs Computer")
-            minimax.board = [[' ' for _ in range(9)] for _ in range(9)]
-            minimax.running = True
-            minimax.Xplayer_turn = True
-            minimax.buttons = [[None for _ in range(9)] for _ in range(9)]
-            for i in range(9):
-                for j in range(9):
-                    minimax.buttons[i][j] = tk.Button(
-                        game_window, text=' ', font=('Arial', 20), width=3, height=1,
-                        command=lambda row=i, col=j: minimax.handle_click(row, col)
-                    )
-                    minimax.buttons[i][j].grid(row=i, column=j)
+def start_9x9_2players():
+    tic_tac_toe = importlib.import_module('tic_tac_toe')
+    tic_tac_toe.root.mainloop()
 
-def choose_play_type(mode):
-    play_type_window = tk.Toplevel(root)
-    tk.Button(
-        play_type_window, text="PvP", font=("Arial", 14),
-        command=lambda: [play_type_window.destroy(), start_game(mode, "PvP")]
-    ).pack(pady=10)
 
-    tk.Button(
-        play_type_window, text="PvC", font=("Arial", 14),
-        command=lambda: [play_type_window.destroy(), start_game(mode, "PvC")]
-    ).pack(pady=10)
+def start_3x3_with_computer():
+    minimax_3x3 = importlib.import_module('minimax_3x3')
+    minimax_3x3.root.mainloop()
 
-def choose_game_mode():
-    mode_window = tk.Toplevel(root)
+def start_3x3_2players():
+    tic_tac_toe_3x3 = importlib.import_module('tic_tac_toe_3x3')
+    tic_tac_toe_3x3.root.mainloop()
 
-    tk.Button(
-        mode_window, text="3x3", font=("Arial", 14),
-        command=lambda: [mode_window.destroy(), choose_play_type("3x3")]
-    ).pack(pady=10)
+def main_menu():
+    root = tk.Tk()
+    root.title("Tic Tac Toe - Main Menu")
 
-    tk.Button(
-        mode_window, text="9x9", font=("Arial", 14),
-        command=lambda: [mode_window.destroy(), choose_play_type("9x9")]
-    ).pack(pady=10)
+    label = tk.Label(root, text="Choose Game Mode", font=('Arial', 20))
+    label.pack(pady=20)
 
-root = tk.Tk()
-root.title("Tic Tac Toe")
+    btn_9x9_ai = tk.Button(root, text="9x9 PvC", font=('Arial', 14), width=20, command=start_9x9_with_computer)
+    btn_9x9_ai.pack(pady=5)
 
-tk.Label(root, text="Tic Tac Toe", font=("Arial", 20, "bold")).pack(pady=20)
+    btn_9x9_2players = tk.Button(root, text="9x9 PvP", font=('Arial', 14), width=20, command=start_9x9_2players)
+    btn_9x9_2players.pack(pady=5)
 
-tk.Button(
-    root, text="Start Game", font=("Arial", 16),
-    command=choose_game_mode
-).pack(pady=10)
+    btn_3x3_ai = tk.Button(root, text="3x3 PvC", font=('Arial', 14), width=20, command=start_3x3_with_computer)
+    btn_3x3_ai.pack(pady=5)
 
-tk.Button(root, text="Exit", font=("Arial", 16), command=root.quit).pack(pady=20)
+    btn_3x3_2players = tk.Button(root, text="3x3 PvP", font=('Arial', 14), width=20, command=start_3x3_2players)
+    btn_3x3_2players.pack(pady=5)
 
-root.mainloop()
+    root.mainloop()
 
+if __name__ == "__main__":
+    main_menu()

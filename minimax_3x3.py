@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 import math
 
-# Tạo bảng 3x3
 board = [[' ' for _ in range(3)] for _ in range(3)]
 Xplayer_turn = True
 running = True
@@ -14,21 +13,17 @@ def putO(a, b):
     board[a][b] = 'O'
 
 def checkWinner(player):
-    # Kiểm tra hàng ngang
     for i in range(3):
         if all(board[i][j] == player for j in range(3)):
             return True
-
-    # Kiểm tra hàng dọc
+        
     for j in range(3):
         if all(board[i][j] == player for i in range(3)):
             return True
 
-    # Kiểm tra đường chéo chính
     if all(board[i][i] == player for i in range(3)):
         return True
 
-    # Kiểm tra đường chéo phụ
     if all(board[i][2 - i] == player for i in range(3)):
         return True
 
