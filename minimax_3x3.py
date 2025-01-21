@@ -16,17 +16,13 @@ def checkWinner(player):
     for i in range(3):
         if all(board[i][j] == player for j in range(3)):
             return True
-        
     for j in range(3):
         if all(board[i][j] == player for i in range(3)):
             return True
-
     if all(board[i][i] == player for i in range(3)):
         return True
-
     if all(board[i][2 - i] == player for i in range(3)):
         return True
-
     return False
 
 def getValidMoves():
@@ -45,7 +41,6 @@ def minimax(depth, isMax, alpha, beta):
         return score + depth
     if not getValidMoves() or depth == 3:
         return 0
-
     if isMax:
         best = -math.inf
         for i, j in getValidMoves():
@@ -90,30 +85,39 @@ def evaluate():
 def isDraw():
     return all(board[i][j] != ' ' for i in range(3) for j in range(3))
 
+def reset_game():
+    global board, Xplayer_turn, running
+    board = [[' ' for _ in range(3)] for _ in range(3)]
+    Xplayer_turn = True
+    running = True
+
+    for i in range(3):
+        for j in range(3):
+            buttons[i][j].config(text=' ', state='normal')
+
 def handle_click(row, col):
     global Xplayer_turn, running
 
     if not running or board[row][col] != ' ':
         return
-
     if Xplayer_turn:
         putX(row, col)
         buttons[row][col].config(text='X', state='disabled')
         if checkWinner('X'):
             messagebox.showinfo("Game Over", "You won!")
-            running = False
+            reset_game()
+            return
         elif isDraw():
             messagebox.showinfo("Game Over", "It's a draw!")
-            running = False
+            reset_game()
+            return
         else:
             Xplayer_turn = False
-    
     if running and not Xplayer_turn:
         computer_move()
 
 def computer_move():
     global Xplayer_turn, running
-
     if running:
         bestMove = findBestMove()
         putO(bestMove[0], bestMove[1])
@@ -121,10 +125,12 @@ def computer_move():
 
         if checkWinner('O'):
             messagebox.showinfo("Game Over", "Computer wins!")
-            running = False
+            reset_game()
+            return
         elif isDraw():
             messagebox.showinfo("Game Over", "It's a draw!")
-            running = False
+            reset_game()
+            return
 
     Xplayer_turn = True
 

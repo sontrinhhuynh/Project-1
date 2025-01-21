@@ -17,22 +17,18 @@ def checkWinner(player):
         for j in range(5):
             if all(board[i][j + k] == player for k in range(5)):
                 return True
-
     for i in range(5):
         for j in range(9):
             if all(board[i + k][j] == player for k in range(5)):
                 return True
-
     for i in range(5):
         for j in range(5):
             if all(board[i + k][j + k] == player for k in range(5)):
                 return True
-
     for i in range(5):
         for j in range(4, 9):
             if all(board[i + k][j - k] == player for k in range(5)):
-                return True
-
+                return True 
     return False
 
 def getValidMoves():
@@ -56,7 +52,6 @@ def minimax(depth, isMax, alpha, beta):
         return score + depth
     if not getValidMoves() or depth == 3:
         return 0
-
     if isMax:
         best = -math.inf
         for i, j in getValidMoves():
@@ -98,34 +93,40 @@ def evaluate():
     else:
         return 0
 
+def reset_game():
+    global board, Xplayer_turn, running
+    board = [[' ' for _ in range(9)] for _ in range(9)]
+    Xplayer_turn = True
+    running = True
+    for i in range(9):
+        for j in range(9):
+            buttons[i][j].config(text=' ', state='normal')
+
 def handle_click(row, col):
     global Xplayer_turn, running
-
     if not running or board[row][col] != ' ':
         return
-
     if Xplayer_turn:
         putX(row, col)
         buttons[row][col].config(text='X', state='disabled')
         if checkWinner('X'):
             messagebox.showinfo("Game Over", "You won!")
-            running = False
-        Xplayer_turn = False
-    
+            reset_game()
+            return
+        Xplayer_turn = False    
     if running and not Xplayer_turn:
         computer_move()
 
 def computer_move():
     global Xplayer_turn, running
-
     if running:
         bestMove = findBestMove()
         putO(bestMove[0], bestMove[1])
         buttons[bestMove[0]][bestMove[1]].config(text='O', state='disabled')
-
         if checkWinner('O'):
             messagebox.showinfo("Game Over", "Computer wins!")
-            running = False
+            reset_game()
+            return
 
     Xplayer_turn = True
 
